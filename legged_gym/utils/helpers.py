@@ -100,17 +100,9 @@ def parse_sim_params(args, cfg):
 
     return sim_params
 
-def get_load_path(root, load_run=-1, checkpoint=-1):
-    try:
-        runs = os.listdir(root)
-        #TODO sort by date to handle change of month
-        runs.sort()
-        if 'exported' in runs: runs.remove('exported')
-        last_run = os.path.join(root, runs[-1])
-    except:
-        raise ValueError("No runs in this directory: " + root)
-    if load_run==-1:
-        load_run = last_run
+def get_load_path(root, load_run, checkpoint=-1):
+    if load_run is None:
+        raise ValueError("Please specify the model run to load.")
     else:
         load_run = os.path.join(root, load_run)
 
@@ -151,6 +143,7 @@ def update_cfg_from_args(env_cfg, cfg_train, args):
 
 def get_args():
     custom_parameters = [
+        {"name": "--exptid", "type": str, "help": "export id"},
         {"name": "--task", "type": str, "default": "anymal_c_flat", "help": "Resume training or start testing from a checkpoint. Overrides config file if provided."},
         {"name": "--resume", "action": "store_true", "default": False,  "help": "Resume training from a checkpoint"},
         {"name": "--experiment_name", "type": str,  "help": "Name of the experiment to run or load. Overrides config file if provided."},

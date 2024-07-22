@@ -38,9 +38,12 @@ from legged_gym.utils import get_args, task_registry
 import torch
 
 def train(args):
+
+    print("\nStarting training with exptid:", args.exptid)
+
     env, env_cfg = task_registry.make_env(name=args.task, args=args)
-    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args)
-    ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True)
+    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, log_root="/opt/isaacgym/output_files/dog_walk/")
+    ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True, wandb_project=args.exptid)
 
 if __name__ == '__main__':
     args = get_args()
