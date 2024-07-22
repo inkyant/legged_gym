@@ -545,6 +545,8 @@ class LeggedRobot(BaseTask):
         """ Prepares a list of reward functions, whcih will be called to compute the total reward.
             Looks for self._reward_<REWARD_NAME>, where <REWARD_NAME> are names of all non zero reward scales in the cfg.
         """
+        print("="*8,"\nREWARD SCALES:\n", self.reward_scales, "\n")
+
         # remove zero scales + multiply non-zero ones by dt
         for key in list(self.reward_scales.keys()):
             scale = self.reward_scales[key]
@@ -813,6 +815,8 @@ class LeggedRobot(BaseTask):
         return heights.view(self.num_envs, -1) * self.terrain.cfg.vertical_scale
 
     #------------ reward functions----------------
+    # lin_vel_z, ang_vel_xy, orientation, base_height, torques, dof_vel, dof_acc, action_rate, collision, termination, dof_pos_limits, dof_vel_limits, torque_limits, tracking_lin_vel, tracking_ang_vel, feet_air_time, stumble, stand_still, feet_contact_forces
+    
     def _reward_lin_vel_z(self):
         # Penalize z axis base linear velocity
         return torch.square(self.base_lin_vel[:, 2])
