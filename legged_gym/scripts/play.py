@@ -75,6 +75,7 @@ def play(args):
     img_idx = 0
 
     if RECORD_FRAMES:
+        # ffmpeg -f image2 -framerate 20 -i %d.png -c:v libx264 -crf 22 video.mp4
         frames_path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'frames')
         os.makedirs(frames_path, exist_ok=True)
 
