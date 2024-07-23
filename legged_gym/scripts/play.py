@@ -74,12 +74,16 @@ def play(args):
     camera_direction = np.array(env_cfg.viewer.lookat) - np.array(env_cfg.viewer.pos)
     img_idx = 0
 
+    if RECORD_FRAMES:
+        frames_path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'frames')
+        os.makedirs(frames_path, exist_ok=True)
+
     for i in range(10*int(env.max_episode_length)):
         actions = policy(obs.detach())
         obs, _, rews, dones, infos = env.step(actions.detach())
         if RECORD_FRAMES:
             if i % 2:
-                filename = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'frames', f"{img_idx}.png")
+                filename = os.path.join(frames_path, f"{img_idx}.png")
                 env.gym.write_viewer_image_to_file(env.viewer, filename)
                 img_idx += 1 
         if MOVE_CAMERA:
@@ -115,7 +119,7 @@ def play(args):
 
 if __name__ == '__main__':
     EXPORT_POLICY = True
-    RECORD_FRAMES = False
+    RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
     play(args)
