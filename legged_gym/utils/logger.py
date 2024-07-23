@@ -123,6 +123,8 @@ class Logger:
         if log["dof_torque"]!=[]: a.plot(time, log["dof_torque"], label='measured')
         a.set(xlabel='time [s]', ylabel='Joint Torque [Nm]', title='Torque')
         a.legend()
+
+        plt.tight_layout()
         plt.show()
 
     def print_rewards(self):
