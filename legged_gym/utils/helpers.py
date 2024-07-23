@@ -106,6 +106,9 @@ def get_load_path(root, load_run, checkpoint=-1):
     else:
         load_run = os.path.join(root, load_run)
 
+    print("LOAD RUN: ", load_run, "files:\n", os.listdir(load_run))
+    # /opt/isaacgym/output_files/dog_walk/b1-walk-success
+
     if checkpoint==-1:
         models = [file for file in os.listdir(load_run) if 'model' in file]
         models.sort(key=lambda m: '{0:0>15}'.format(m))
