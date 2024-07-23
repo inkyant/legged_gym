@@ -29,7 +29,7 @@
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
 import sys
-from isaacgym import gymapi
+from isaacgym import gymapi, gymtorch
 from isaacgym import gymutil
 import numpy as np
 import torch
@@ -86,6 +86,8 @@ class BaseTask():
 
         # todo: read from config
         self.enable_viewer_sync = True
+        self.enable_actor_camera_follow = False
+        self.selected_actor_camera_follow = 0
         self.viewer = None
 
         # if running with a viewer, set up keyboard shortcuts and camera
@@ -97,6 +99,12 @@ class BaseTask():
                 self.viewer, gymapi.KEY_ESCAPE, "QUIT")
             self.gym.subscribe_viewer_keyboard_event(
                 self.viewer, gymapi.KEY_V, "toggle_viewer_sync")
+            self.gym.subscribe_viewer_keyboard_event(
+                self.viewer, gymapi.KEY_M, "follow_selected_actor")
+            self.gym.subscribe_viewer_keyboard_event(
+                self.viewer, gymapi.KEY_K, "increase_selected_actor")
+            self.gym.subscribe_viewer_keyboard_event(
+                self.viewer, gymapi.KEY_J, "decrease_selected_actor")
 
     def get_observations(self):
         return self.obs_buf
@@ -129,6 +137,12 @@ class BaseTask():
                     sys.exit()
                 elif evt.action == "toggle_viewer_sync" and evt.value > 0:
                     self.enable_viewer_sync = not self.enable_viewer_sync
+                elif evt.action == "follow_selected_actor" and evt.value > 0:
+                    self.enable_actor_camera_follow = not self.enable_actor_camera_follow
+                elif evt.action == "increase_selected_actor" and evt.value > 0 and self.selected_actor_camera_follow < self.num_envs - 1:
+                    self.selected_actor_camera_follow += 1
+                elif evt.action == "decrease_selected_actor" and evt.value > 0 and self.selected_actor_camera_follow > 0:
+                    self.selected_actor_camera_follow -= 1
 
             # fetch results
             if self.device != 'cpu':
@@ -136,6 +150,14 @@ class BaseTask():
 
             # step graphics
             if self.enable_viewer_sync:
+
+                if self.enable_actor_camera_follow:
+                    pos = self.gym.acquire_actor_root_state_tensor(self.sim)
+                    pos = gymtorch.wrap_tensor(pos)[self.selected_actor_camera_follow, 0:3]
+                    camera_position = pos.to('cpu') + torch.tensor([0, -2, 2])
+                    camera_direction = np.array([1.0, 5.0, -3.0])
+                    self.set_camera(camera_position, camera_position + camera_direction)
+
                 self.gym.step_graphics(self.sim)
                 self.gym.draw_viewer(self.viewer, self.sim, True)
                 if sync_frame_time:
