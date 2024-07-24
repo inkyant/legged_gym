@@ -36,6 +36,7 @@ import isaacgym
 from legged_gym.envs import *
 from legged_gym.utils import get_args, task_registry
 import torch
+import wandb
 
 def train(args):
 
@@ -43,6 +44,10 @@ def train(args):
 
     env, env_cfg = task_registry.make_env(name=args.task, args=args)
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, log_root="/opt/isaacgym/output_files/dog_walk/")
+    
+    wandb.init(config={"reward_scales", env.reward_scales})
+    print("="*8,"\nREWARD SCALES:\n", env.reward_scales, "\n")
+    
     ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True, wandb_project=args.exptid)
 
 if __name__ == '__main__':

@@ -545,7 +545,6 @@ class LeggedRobot(BaseTask):
         """ Prepares a list of reward functions, whcih will be called to compute the total reward.
             Looks for self._reward_<REWARD_NAME>, where <REWARD_NAME> are names of all non zero reward scales in the cfg.
         """
-        print("="*8,"\nREWARD SCALES:\n", self.reward_scales, "\n")
 
         # remove zero scales + multiply non-zero ones by dt
         for key in list(self.reward_scales.keys()):
