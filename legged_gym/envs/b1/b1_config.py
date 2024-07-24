@@ -63,6 +63,8 @@ class B1RoughCfg( LeggedRobotCfg ):
 
 class B1RoughCfgPPO( LeggedRobotCfgPPO ):
     class runner( LeggedRobotCfgPPO.runner ):
+        max_iterations = 6000 # number of policy updates
+        save_interval = 100 # check for potential saves every this many iterations
         run_name = ''
         experiment_name = 'rough_b1'
 

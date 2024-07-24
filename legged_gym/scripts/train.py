@@ -46,9 +46,13 @@ def train(args):
     env, env_cfg = task_registry.make_env(name=args.task, args=args)
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, log_root="/opt/isaacgym/output_files/dog_walk/")
     
-    wandb.init(entity="apfurman", config=env.reward_scales)
-    shutil.copyfile('/opt/isaacgym/legged_gym/legged_gym/envs/b1/b1_config.py', f'/opt/isaacgym/output_files/dog_walk/{args.exptid}/config/b1_config.py')
+    config_output_dir = f'/opt/isaacgym/output_files/dog_walk/{args.exptid}/config/'
+    os.makedirs(config_output_dir, exist_ok=True)
+    shutil.copyfile('/opt/isaacgym/legged_gym/legged_gym/envs/b1/b1_config.py', config_output_dir + 'b1_config.py')
     print("="*8,"\nREWARD SCALES:\n", env.reward_scales, "\n")
+    
+    os.environ["WANDB_USERNAME"] = "apfurman"
+    wandb.init(entity="apfurman", config=env.reward_scales)
     
     ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True, wandb_project=args.exptid)
 
