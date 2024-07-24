@@ -61,7 +61,10 @@ def play(args):
     # export policy as a jit module (used to run it from C++)
     if EXPORT_POLICY:
         path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'policies')
-        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
+        models = [file for file in os.listdir(f'/opt/isaacgym/output_files/dog_walk/{args.exptid}/') if 'model_' in file]
+        models.sort(key=lambda m: '{0:0>15}'.format(m))
+        number = models[-1][6:-3]
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path, f'policy_jit_{number}.pt')
         print('Exported policy as jit script to: ', path)
 
     logger = Logger(env.dt)
@@ -75,7 +78,7 @@ def play(args):
     img_idx = 0
 
     if RECORD_FRAMES:
-        # ffmpeg -f image2 -framerate 20 -i %d.png -c:v libx264 -crf 22 video.mp4
+        # ffmpeg -f image2 -framerate 20 -i frames/%d.png -c:v libx264 -crf 22 video.mp4
         frames_path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'frames')
         os.makedirs(frames_path, exist_ok=True)
 
@@ -86,6 +89,8 @@ def play(args):
             if i % 2:
                 filename = os.path.join(frames_path, f"{img_idx}.png")
                 env.gym.write_viewer_image_to_file(env.viewer, filename)
+                if img_idx % 20 == 0:
+                    print(f"Saved frame {img_idx}")
                 img_idx += 1 
         if MOVE_CAMERA:
             camera_position += camera_vel * env.dt
