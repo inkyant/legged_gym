@@ -28,6 +28,8 @@
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
+import imageio
+from isaacgym import gymapi
 from legged_gym import LEGGED_GYM_ROOT_DIR
 import os
 
@@ -70,29 +72,53 @@ def play(args):
     joint_index = 1 # which joint is used for logging
     stop_state_log = 100 # number of steps before plotting states
     stop_rew_log = env.max_episode_length + 1 # number of steps before print average episode rewards
-    camera_position = np.array(env_cfg.viewer.pos, dtype=np.float64)
-    camera_vel = np.array([1., 1., 0.])
-    camera_direction = np.array(env_cfg.viewer.lookat) - np.array(env_cfg.viewer.pos)
+
     img_idx = 0
+    
+    max_frames = 700
+
+    # actors for camera playback
+    actor_idxs = [0, 10, 20, 30, 40]
+    # cameras = []
+
+    for actor_idx in actor_idxs:
+        local_transform = gymapi.Transform()
+        local_transform.p = gymapi.Vec3(-5,0,5)
+        local_transform.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(0,1,0), np.radians(45.0))
+        cam = env.gym.create_camera_sensor(env.envs[actor_idx], gymapi.CameraProperties())
+        env.gym.attach_camera_to_body(cam, env.envs[actor_idx], env.actor_handles[actor_idx], local_transform, gymapi.FOLLOW_POSITION)
+        # cameras.append(cam)
 
     if RECORD_FRAMES:
         # ffmpeg -f image2 -framerate 20 -i frames/%d.png -c:v libx264 -crf 22 video.mp4
         frames_path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'frames')
         os.makedirs(frames_path, exist_ok=True)
 
+    frames_per_actor = max_frames // len(actor_idxs)
+
     for i in range(10*int(env.max_episode_length)):
         actions = policy(obs.detach())
         obs, _, rews, dones, infos = env.step(actions.detach())
         if RECORD_FRAMES:
             if i % 2:
-                filename = os.path.join(frames_path, f"{img_idx}.png")
-                env.gym.write_viewer_image_to_file(env.viewer, filename)
-                if img_idx % 20 == 0:
-                    print(f"Saved frame {img_idx}")
+
+                env.gym.fetch_results(env.sim, True)
+                env.gym.step_graphics(env.sim)
+                env.gym.render_all_camera_sensors(env.sim)
+
+                # all camera sensors are always rendered, so might as well make video by stitching 
+                # the frames together.
+                for i, actor_idx in enumerate(actor_idxs):
+                    # for some reason it works without the camera handle if you just put 0
+                    image = env.gym.get_camera_image(env.sim, env.envs[actor_idx], 0, gymapi.IMAGE_COLOR)
+                    image = image.reshape(image.shape[0], -1, 4)[..., :3]
+                    filename = os.path.join(frames_path, f"{img_idx + i*frames_per_actor}.png")
+                    imageio.imwrite(filename, image)
+
+                print(f"\rsaved {img_idx*100 / frames_per_actor:.2f}% of frames", end='')
                 img_idx += 1 
-        if MOVE_CAMERA:
-            camera_position += camera_vel * env.dt
-            env.set_camera(camera_position, camera_position + camera_direction)
+                if img_idx >= frames_per_actor:
+                    break
 
         if i < stop_state_log:
             logger.log_states(
@@ -124,6 +150,5 @@ def play(args):
 if __name__ == '__main__':
     EXPORT_POLICY = True
     RECORD_FRAMES = True
-    MOVE_CAMERA = False
     args = get_args()
     play(args)
