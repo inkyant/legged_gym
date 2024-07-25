@@ -100,11 +100,8 @@ def parse_sim_params(args, cfg):
 
     return sim_params
 
-def get_load_path(root, load_run, checkpoint=-1):
-    if load_run is None:
-        raise ValueError("Please specify the model run to load.")
-    else:
-        load_run = os.path.join(root, load_run, 'models')
+def get_load_path(root, checkpoint=-1):
+    load_run = os.path.join(root, 'models')
 
     if checkpoint==-1:
         models = [file for file in os.listdir(load_run) if 'model' in file]

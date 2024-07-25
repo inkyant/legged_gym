@@ -118,6 +118,7 @@ def play(args):
                 print(f"\rsaved {img_idx*100 / frames_per_actor:.2f}% of frames", end='')
                 img_idx += 1 
                 if img_idx >= frames_per_actor:
+                    print()
                     break
 
         if i < stop_state_log:
