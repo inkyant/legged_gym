@@ -137,11 +137,11 @@ class TaskRegistry():
 
         if log_root=="default":
             log_root = os.path.join('/opt/isaacgym/output_files/dog_walk')
-            log_dir = os.path.join(log_root, args.exptid)
+            log_dir = os.path.join(log_root, args.exptid, 'models')
         elif log_root is None:
             log_dir = None
         else:
-            log_dir = os.path.join(log_root, args.exptid)
+            log_dir = os.path.join(log_root, args.exptid, 'models')
         
         train_cfg_dict = class_to_dict(train_cfg)
         runner = OnPolicyRunner(env, train_cfg_dict, log_dir, device=args.rl_device)
@@ -149,7 +149,8 @@ class TaskRegistry():
         resume = train_cfg.runner.resume
         if resume:
             # load previously trained model
-            resume_path = get_load_path(log_root, load_run=args.exptid, checkpoint=train_cfg.runner.checkpoint)
+            resume_path, chkpt = get_load_path(log_root, load_run=args.exptid, checkpoint=train_cfg.runner.checkpoint)
+            train_cfg.runner.checkpoint = chkpt
             print(f"Loading model from: {resume_path}")
             runner.load(resume_path)
         return runner, train_cfg

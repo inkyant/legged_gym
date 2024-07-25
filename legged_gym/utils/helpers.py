@@ -104,7 +104,7 @@ def get_load_path(root, load_run, checkpoint=-1):
     if load_run is None:
         raise ValueError("Please specify the model run to load.")
     else:
-        load_run = os.path.join(root, load_run)
+        load_run = os.path.join(root, load_run, 'models')
 
     if checkpoint==-1:
         models = [file for file in os.listdir(load_run) if 'model' in file]
@@ -114,7 +114,7 @@ def get_load_path(root, load_run, checkpoint=-1):
         model = "model_{}.pt".format(checkpoint) 
 
     load_path = os.path.join(load_run, model)
-    return load_path
+    return load_path, int(model[6:-3])
 
 def update_cfg_from_args(env_cfg, cfg_train, args):
     # seed

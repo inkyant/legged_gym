@@ -61,10 +61,8 @@ def play(args):
     # export policy as a jit module (used to run it from C++)
     if EXPORT_POLICY:
         path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'policies')
-        models = [file for file in os.listdir(f'/opt/isaacgym/output_files/dog_walk/{args.exptid}/') if 'model_' in file]
-        models.sort(key=lambda m: '{0:0>15}'.format(m))
-        number = models[-1][6:-3]
-        export_policy_as_jit(ppo_runner.alg.actor_critic, path, f'policy_jit_{number}.pt')
+        checkpoint = train_cfg.runner.checkpoint if train_cfg.runner.checkpoint != -1 else 0
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path, f'policy_jit_{checkpoint}.pt')
         print('Exported policy as jit script to: ', path)
 
     logger = Logger(env.dt)
