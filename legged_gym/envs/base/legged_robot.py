@@ -300,8 +300,15 @@ class LeggedRobot(BaseTask):
                 # soft limits
                 m = (self.dof_pos_limits[i, 0] + self.dof_pos_limits[i, 1]) / 2
                 r = self.dof_pos_limits[i, 1] - self.dof_pos_limits[i, 0]
-                self.dof_pos_limits[i, 0] = m - 0.5 * r * self.cfg.rewards.soft_dof_pos_limit
-                self.dof_pos_limits[i, 1] = m + 0.5 * r * self.cfg.rewards.soft_dof_pos_limit
+                if isinstance(self.cfg.rewards.soft_dof_pos_limit, np.ndarray):
+                    if self.cfg.rewards.soft_dof_pos_limit.shape != (len(props), 2):
+                        raise ValueError(f"Invalid shape for rewards.soft_dof_pos_limit.shape, expected float or ndarray of shape ({len(props)}, {2}), got shape {str(self.cfg.rewards.soft_dof_pos_limit.shape)}.")
+                    self.dof_pos_limits[i, 0] = m - 0.5 * r * self.cfg.rewards.soft_dof_pos_limit[i, 0]
+                    self.dof_pos_limits[i, 1] = m + 0.5 * r * self.cfg.rewards.soft_dof_pos_limit[i, 1]
+                else:
+                    self.dof_pos_limits[i, 0] = m - 0.5 * r * self.cfg.rewards.soft_dof_pos_limit
+                    self.dof_pos_limits[i, 1] = m + 0.5 * r * self.cfg.rewards.soft_dof_pos_limit
+
         return props
 
     def _process_rigid_body_props(self, props, env_id):
