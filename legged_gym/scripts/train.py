@@ -52,7 +52,7 @@ def train(args):
     shutil.copyfile('/opt/isaacgym/legged_gym/legged_gym/envs/b1/b1_config.py', output_dir + 'b1_config.py')
     print("="*8,"\nREWARD SCALES:\n", env.reward_scales, "\n")
     
-    wandb.init(project="b1-gym", entity="apfurman", config=env.reward_scales)
+    wandb.init(project="b1-gym", entity="apfurman", config=env.reward_scales, mode="online")
     
     ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True, wandb_project=args.exptid)
 
