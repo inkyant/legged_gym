@@ -42,18 +42,18 @@ class B1RoughCfg( LeggedRobotCfg ):
         self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
   
     class rewards( LeggedRobotCfg.rewards ):
-        soft_dof_pos_limit = np.array[[0.7, 0.7],
-                                      [0.9, 0.9],
-                                      [0.9, 0.9],
-                                      [0.7, 0.7],
-                                      [0.9, 0.9],
-                                      [0.9, 0.9],
-                                      [0.7, 0.7],
-                                      [0.9, 0.9],
-                                      [0.9, 0.9],
-                                      [0.7, 0.7],
-                                      [0.9, 0.9],
-                                      [0.9, 0.9],]
+        soft_dof_pos_limit = np.array([[0.7, 0.7],
+                                       [0.9, 0.9],
+                                       [0.9, 0.9],
+                                       [0.7, 0.7],
+                                       [0.9, 0.9],
+                                       [0.9, 0.9],
+                                       [0.7, 0.7],
+                                       [0.9, 0.9],
+                                       [0.9, 0.9],
+                                       [0.7, 0.7],
+                                       [0.9, 0.9],
+                                       [0.9, 0.9]])
         base_height_target = 0.5
         class scales( LeggedRobotCfg.rewards.scales ):
             # lin_vel_z, ang_vel_xy, orientation, base_height, torques, dof_vel, dof_acc, 
