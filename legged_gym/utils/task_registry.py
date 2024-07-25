@@ -137,11 +137,11 @@ class TaskRegistry():
 
         if log_root=="default":
             log_root = os.path.join('/opt/isaacgym/output_files/dog_walk')
-            log_dir = os.path.join(log_root, args.exptid, 'models')
+            log_dir = os.path.join(log_root, args.exptid)
         elif log_root is None:
             log_dir = None
         else:
-            log_dir = os.path.join(log_root, args.exptid, 'models')
+            log_dir = os.path.join(log_root, args.exptid)
         
         train_cfg_dict = class_to_dict(train_cfg)
         runner = OnPolicyRunner(env, train_cfg_dict, log_dir, device=args.rl_device)

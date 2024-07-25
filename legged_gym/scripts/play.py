@@ -62,7 +62,7 @@ def play(args):
     
     # export policy as a jit module (used to run it from C++)
     if EXPORT_POLICY:
-        path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'policies')
+        path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'export')
         checkpoint = train_cfg.runner.checkpoint if train_cfg.runner.checkpoint != -1 else 0
         export_policy_as_jit(ppo_runner.alg.actor_critic, path, f'policy_jit_{checkpoint}.pt')
         print('Exported policy as jit script to: ', path)
@@ -90,8 +90,8 @@ def play(args):
         # cameras.append(cam)
 
     if RECORD_FRAMES:
-        # ffmpeg -f image2 -framerate 20 -i frames/%d.png -c:v libx264 -crf 22 video.mp4
-        frames_path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'exported', 'frames')
+        # ffmpeg -f image2 -framerate 20 -i frames/%d.png -c:v libx264 -crf 22 export/video.mp4
+        frames_path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'frames')
         os.makedirs(frames_path, exist_ok=True)
 
     frames_per_actor = max_frames // len(actor_idxs)
