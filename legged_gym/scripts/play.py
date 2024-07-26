@@ -45,6 +45,7 @@ def play(args):
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 50)
+    env_cfg.env.headless_graphics = True
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
@@ -90,6 +91,7 @@ def play(args):
         # cameras.append(cam)
 
     if RECORD_FRAMES:
+        env.graphics_device_id = env.sim_device_id
         # ffmpeg -f image2 -framerate 20 -i frames/%d.png -c:v libx264 -crf 22 export/video.mp4
         frames_path = os.path.join('/opt/isaacgym/output_files/dog_walk', args.exptid, 'frames')
         os.makedirs(frames_path, exist_ok=True)
