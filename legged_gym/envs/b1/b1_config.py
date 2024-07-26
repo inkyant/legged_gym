@@ -26,8 +26,8 @@ class B1RoughCfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'hip': 100., 'thigh': 300, 'calf': 300}  # [N*m/rad]
-        damping = {'hip': 5, 'thigh': 8, 'calf': 8}     # [N*m*s/rad]
+        stiffness = {'joint': 80.}  # [N*m/rad]
+        damping = {'joint': 2}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
