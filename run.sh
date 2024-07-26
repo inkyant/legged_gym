@@ -10,7 +10,7 @@ git pull
 git checkout $RUN_BRANCH
 
 # replace spaces with dashes, and prepend "b1-"
-exptid="b1-${$RUN_BRANCH// /-}"
+exptid="b1-${RUN_BRANCH// /-}"
 
 # train
 python legged_gym/scripts/train.py --task=b1 --exptid=$exptid --headless
