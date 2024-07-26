@@ -47,6 +47,7 @@ class B1RoughCfg( LeggedRobotCfg ):
             [0.7, 0.7], [0.9, 0.9], [0.9, 0.9],
             [0.7, 0.7], [0.9, 0.9], [0.9, 0.9],
             [0.7, 0.7], [0.9, 0.9], [0.9, 0.9],
+            [0.7, 0.7], [0.9, 0.9], [0.9, 0.9],
         ])
         base_height_target = 0.5
         class scales( LeggedRobotCfg.rewards.scales ):
