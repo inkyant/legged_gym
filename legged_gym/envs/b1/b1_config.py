@@ -67,6 +67,8 @@ class B1RoughCfg( LeggedRobotCfg ):
             # 'tracking_ang_vel': 0.5, 
             # 'tracking_lin_vel': 1.0
             # }
+            torques = -0.0002
+            dof_pos_limits = -1.0
             pass
 
 class B1RoughCfgPPO( LeggedRobotCfgPPO ):
