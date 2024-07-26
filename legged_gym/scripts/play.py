@@ -76,7 +76,7 @@ def play(args):
 
     img_idx = 0
     
-    max_frames = 700
+    max_frames = 1000
 
     # actors for camera playback
     actor_idxs = [0, 10, 20, 30, 40]

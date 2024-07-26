@@ -49,7 +49,7 @@ def train(args):
     output_dir = f'/opt/isaacgym/output_files/dog_walk/{args.exptid}/export/'
     os.makedirs(output_dir, exist_ok=True)
 
-    shutil.copyfile('/opt/isaacgym/legged_gym/legged_gym/envs/b1/b1_config.py', output_dir + 'b1_config.py')
+    shutil.copyfile('/opt/isaacgym/legged_gym/legged_gym/envs/b1/b1_config.py', output_dir + f'{args.exptid}_config.py')
     print("="*8,"\nREWARD SCALES:\n", env.reward_scales, "\n")
     
     wandb.init(project="b1-gym", entity="apfurman", config=env.reward_scales, mode="online")
