@@ -9,9 +9,8 @@ cd /opt/isaacgym/legged_gym/
 git pull
 git checkout $RUN_BRANCH
 
-# get latest commit message, replace spaces with dashes, and prepend "b1-"
-latest_commit_message=$(git log --no-merges -1 --format=%s)
-exptid="b1-${latest_commit_message// /-}"
+# replace spaces with dashes, and prepend "b1-"
+exptid="b1-${$RUN_BRANCH// /-}"
 
 # train
 python legged_gym/scripts/train.py --task=b1 --exptid=$exptid --headless
