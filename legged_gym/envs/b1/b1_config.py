@@ -39,6 +39,9 @@ class B1RoughCfg( LeggedRobotCfg ):
         foot_name = "foot"
         penalize_contacts_on = ["thigh", "calf"]
         terminate_after_contacts_on = ["base"]
+        # TODO: doesn't work with b1. need to investigate mesh or change check_termination()
+        # in legged_robot.py to use get_rigid_contact_forces, to only terminate when you get
+        # a contact with the terrain, not any contact force...
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
   
     class rewards( LeggedRobotCfg.rewards ):
