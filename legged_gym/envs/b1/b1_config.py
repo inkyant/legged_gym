@@ -4,6 +4,12 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 import numpy as np
 
 class B1RoughCfg( LeggedRobotCfg ):
+    class env:
+        num_envs = 4096
+        num_observations = 307
+        num_privileged_obs = None # if not None a priviledge_obs_buf will be returned by step() (critic obs for assymetric training). None is returned otherwise 
+        episode_length_s = 20 # episode length in seconds
+
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.6] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
