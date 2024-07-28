@@ -4,7 +4,7 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 import numpy as np
 
 class B1RoughCfg( LeggedRobotCfg ):
-    class env:
+    class env( LeggedRobotCfg.env ):
         num_envs = 4096
         num_observations = 307
         num_privileged_obs = None # if not None a priviledge_obs_buf will be returned by step() (critic obs for assymetric training). None is returned otherwise 
@@ -76,6 +76,17 @@ class B1RoughCfg( LeggedRobotCfg ):
             pass
 
 class B1RoughCfgPPO( LeggedRobotCfgPPO ):
+
+    class policy( LeggedRobotCfgPPO.policy ):
+        init_noise_std = 1.0
+        actor_hidden_dims = [512, 256, 128]
+        critic_hidden_dims = [512, 256, 128]
+        activation = 'elu' # can be elu, relu, selu, crelu, lrelu, tanh, sigmoid
+        # only for 'ActorCriticRecurrent':
+        # rnn_type = 'lstm'
+        # rnn_hidden_size = 512
+        # rnn_num_layers = 1
+
     class runner( LeggedRobotCfgPPO.runner ):
         max_iterations = 6000 # number of policy updates
         save_interval = 100 # check for potential saves every this many iterations
