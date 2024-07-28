@@ -63,7 +63,7 @@ class B1(LeggedRobot):
                                     self.dof_vel * self.obs_scales.dof_vel,
                                     self.actions,
                                     self.last_actions,
-                                    (self.dof_pos_history - self.default_dof_pos.repeat(3)) * self.obs_scales.dof_pos,
+                                    (self.dof_pos_history - self.default_dof_pos.repeat(1, 3)) * self.obs_scales.dof_pos,
                                     self.last_dof_vel * self.obs_scales.dof_vel,
                                     self.before_last_dof_vel * self.obs_scales.dof_vel
                                     ), dim=-1)
