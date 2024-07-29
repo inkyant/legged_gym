@@ -40,6 +40,27 @@ from legged_gym.utils import  get_args, export_policy_as_jit, task_registry, Log
 import numpy as np
 import torch
 
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+
+def add_text_to_image(image_array, text):
+    """Add text to a numpy image array and return the updated numpy array."""
+
+    image = Image.fromarray(image_array)
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype('Arial.ttf', size=35)
+
+    position = (10, 10)
+    padding = 5
+
+    bbox = draw.textbbox(position, text, font=font)
+    box_x0, box_y0, box_x1, box_y1 = bbox[0] - padding, bbox[1] - padding, bbox[2] + padding, bbox[3] + padding
+
+    # Draw the background box
+    draw.rectangle([box_x0, box_y0, box_x1, box_y1], fill=(0, 0, 0))
+
+    draw.text(position, text, (255, 255, 255), font=font)
+    return np.array(image)
 
 def play(args):
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
@@ -114,6 +135,9 @@ def play(args):
                     # for some reason it works without the camera handle if you just put 0
                     image = env.gym.get_camera_image(env.sim, env.envs[actor_idx], 0, gymapi.IMAGE_COLOR)
                     image = image.reshape(image.shape[0], -1, 4)[..., :3]
+                    text = f"Command:\n   Vel X: {env.commands[actor_idx, 0]:.2f}\n   Vel Y: {env.commands[actor_idx, 1]:.2f}\n   Angular Vel: {env.commands[actor_idx, 2]  * 180 / np.pi:.2f}\n   Heading: {env.commands[actor_idx, 3] * 180 / np.pi:.2f} deg \
+                             \nVel X Error: {env.commands[actor_idx, 0] - env.base_lin_vel[actor_idx, 0]:.2f}\nVel Y Error: {(env.commands[actor_idx, 1] - env.base_lin_vel[actor_idx, 1]):.2f}\nAngular Vel Error: {env.commands[actor_idx, 2] - env.base_ang_vel[actor_idx, 2]:.2f}"
+                    image = add_text_to_image(image, text)
                     filename = os.path.join(frames_path, f"{img_idx + i*frames_per_actor}.png")
                     imageio.imwrite(filename, image)
 
@@ -141,7 +165,8 @@ def play(args):
                 }
             )
         elif i==stop_state_log:
-            logger.plot_states()
+            # logger.plot_states()
+            pass
         if  0 < i < stop_rew_log:
             if infos["episode"]:
                 num_episodes = torch.sum(env.reset_buf).item()
